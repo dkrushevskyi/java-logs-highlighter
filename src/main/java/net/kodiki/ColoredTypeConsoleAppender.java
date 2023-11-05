@@ -7,11 +7,19 @@ import static ch.qos.logback.classic.Level.ERROR_INTEGER;
 import static ch.qos.logback.classic.Level.WARN_INTEGER;
 
 public class ColoredTypeConsoleAppender extends AppenderBase<ILoggingEvent> {
-    private boolean enableColor = true;
+    private boolean enableTypeColoring = false;
+    private ColloredTypeConsoleAppenderMode mode = ColloredTypeConsoleAppenderMode.COLORED_TEXT;
+
+    private static final String TEXT_RED = "\u001B[31m";
+    private static final String TEXT_YELLOW = "\u001B[33m";
+
+    private static final String HIGHLIGHT_RED = "\u001B[41m\u001B[37m";
+    private static final String HIGHLIGHT_YELLOW = "\u001B[43m\u001B[30m";
+    private static final String CLEAR = "\u001B[0m";
 
     @Override
     protected void append(ILoggingEvent event) {
-        if (enableColor) {
+        if (enableTypeColoring) {
             String coloredMessage = getColoredMessage(event);
             System.out.println(coloredMessage);
         } else {
@@ -21,15 +29,28 @@ public class ColoredTypeConsoleAppender extends AppenderBase<ILoggingEvent> {
 
     private String getColoredMessage(ILoggingEvent event) {
         String message = event.getFormattedMessage();
-        if (event.getLevel().levelInt == ERROR_INTEGER) {
-            return "\u001B[41m\u001B[37m" + message + "\u001B[0m"; // Red background, white text
-        } else if (event.getLevel().levelInt == WARN_INTEGER) {
-            return "\u001B[33m" + message + "\u001B[0m"; // Yellow color for warnings
+
+        if (ColloredTypeConsoleAppenderMode.COLORED_TEXT.equals(mode)){
+            if (event.getLevel().levelInt == ERROR_INTEGER) {
+                return TEXT_RED + message + CLEAR; // Red background, white text
+            } else if (event.getLevel().levelInt == WARN_INTEGER) {
+                return TEXT_YELLOW + message + CLEAR;
+            }
+        } else {
+            if (event.getLevel().levelInt == ERROR_INTEGER) {
+                return HIGHLIGHT_RED + message + CLEAR; // Red background, white text
+            } else if (event.getLevel().levelInt == WARN_INTEGER) {
+                return HIGHLIGHT_YELLOW + message + CLEAR;
+            }
         }
         return message;
     }
 
-    public void setEnableColor(boolean enableColor) {
-        this.enableColor = enableColor;
+    public void setEnableTypeColoring(boolean enableTypeColoring) {
+        this.enableTypeColoring = enableTypeColoring;
+    }
+
+    public void setMode(String mode) {
+        this.mode = ColloredTypeConsoleAppenderMode.valueOf(mode);
     }
 }

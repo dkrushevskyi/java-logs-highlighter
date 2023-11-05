@@ -8,9 +8,9 @@ public class Main {
             = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
-        System.out.println("Hello world!");
         logger.info("Example log from {}", Main.class.getSimpleName());
         logger.warn("Warning {}", Main.class.getSimpleName());
         logger.error("Error {}", Main.class.getSimpleName());
+        System.out.println("Hello world!");
     }
 }

@@ -3,7 +3,8 @@
         <enableColor>true</enableColor> <!-- Set to true to enable color -->
     </appender>
     <appender name="CONSOLE" class="net.kodiki.ColoredTypeConsoleAppender">
-        <enableColor>true</enableColor> <!-- Set to true to enable color -->
+        <enableTypeColoring>true</enableTypeColoring>
+        <mode>HIGHLIGHTED_TEXT</mode>
     </appender>
 
     <root level="INFO">

@@ -2,20 +2,19 @@ package net.kodiki;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static ch.qos.logback.classic.Level.ERROR_INTEGER;
 import static ch.qos.logback.classic.Level.WARN_INTEGER;
+import static net.kodiki.AnsiColors.*;
 
 public class ColoredTypeConsoleAppender extends AppenderBase<ILoggingEvent> {
     private boolean enableTypeColoring = false;
     private ColloredTypeConsoleAppenderMode mode = ColloredTypeConsoleAppenderMode.COLORED_TEXT;
 
-    private static final String TEXT_RED = "\u001B[31m";
-    private static final String TEXT_YELLOW = "\u001B[33m";
-
-    private static final String HIGHLIGHT_RED = "\u001B[41m\u001B[37m";
-    private static final String HIGHLIGHT_YELLOW = "\u001B[43m\u001B[30m";
-    private static final String CLEAR = "\u001B[0m";
+    private static final String DEFAULT_WRAPPER_TEMPLATE = "[ %s ]";
+    private String wrapperTemplate = DEFAULT_WRAPPER_TEMPLATE;
 
     @Override
     protected void append(ILoggingEvent event) {
@@ -28,7 +27,8 @@ public class ColoredTypeConsoleAppender extends AppenderBase<ILoggingEvent> {
     }
 
     private String getColoredMessage(ILoggingEvent event) {
-        String message = event.getFormattedMessage();
+        String log = event.getFormattedMessage();
+        String message = format(log);
 
         if (ColloredTypeConsoleAppenderMode.COLORED_TEXT.equals(mode)){
             if (event.getLevel().levelInt == ERROR_INTEGER) {
@@ -40,7 +40,7 @@ public class ColoredTypeConsoleAppender extends AppenderBase<ILoggingEvent> {
             if (event.getLevel().levelInt == ERROR_INTEGER) {
                 return HIGHLIGHT_RED + message + CLEAR; // Red background, white text
             } else if (event.getLevel().levelInt == WARN_INTEGER) {
-                return HIGHLIGHT_YELLOW + message + CLEAR;
+                return HIGHLIGHT_CYAN + message + CLEAR;
             }
         }
         return message;
@@ -52,5 +52,17 @@ public class ColoredTypeConsoleAppender extends AppenderBase<ILoggingEvent> {
 
     public void setMode(String mode) {
         this.mode = ColloredTypeConsoleAppenderMode.valueOf(mode);
+    }
+
+    public void setWrapperTemplate(String template) {
+        this.wrapperTemplate = template;
+    }
+
+    private String format(String message) {
+        if (!wrapperTemplate.contains("%s")) {
+            setWrapperTemplate(DEFAULT_WRAPPER_TEMPLATE);
+            System.out.println(HIGHLIGHT_RED + "WRAPPER TEMPLATE IS NOT CORRECT PLEASE USE %%s, IT DEFINE WHERE TO PUT LOGS INSIDE TEMPLATE. USIGN DEFAULT WRAPPER TEMPLATE" + CLEAR);
+        }
+        return wrapperTemplate.formatted(message);
     }
 }

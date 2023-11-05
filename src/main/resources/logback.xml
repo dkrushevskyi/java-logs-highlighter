@@ -1,0 +1,12 @@
+<configuration>
+    <appender name="CONSOLE" class="net.kodiki.ColoredConsoleAppender">
+        <enableColor>true</enableColor> <!-- Set to true to enable color -->
+    </appender>
+    <appender name="CONSOLE" class="net.kodiki.ColoredTypeConsoleAppender">
+        <enableColor>true</enableColor> <!-- Set to true to enable color -->
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>
